@@ -1,8 +1,9 @@
-import type { Handler } from "@netlify/functions";
-
-export const handler: Handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return {
+      statusCode: 405,
+      body: "Method Not Allowed"
+    };
   }
 
   try {
@@ -29,26 +30,24 @@ ${data.expected_result}
 ⏰ Qulay vaqt: ${data.contact_time}
 `;
 
-    await fetch(
-      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: process.env.CHAT_ID,
-          text: message
-        })
-      }
-    );
+    await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: process.env.CHAT_ID,
+        text: message
+      })
+    });
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true })
     };
+
   } catch (error) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server error" })
     };
   }
-};
+}
